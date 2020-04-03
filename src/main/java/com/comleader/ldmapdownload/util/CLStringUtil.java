@@ -64,6 +64,29 @@ public class CLStringUtil {
         return FileUtil.file(fullFileName);
     }
 
+    /**
+     * @param z
+     * @param x
+     * @param y
+     * @description: 根据传入的 z\x\y来创建本地图片路径
+     * @return: java.lang.String
+     * @author: zhanghang
+     * @date: 2020/4/2
+     **/
+    public static File getFullFileNotExist(Integer z, Integer x, Integer y) {
+        String fullFileName;
+        if (MAP_TYPE == "ArcGIS"){
+            fullFileName = getArcGISFullFile(z,x,y);
+        }else {
+            fullFileName = BASE_PATH + z + File.separator + x + File.separator + y + ".png";
+        }
+        File file = new File(fullFileName);
+        if (file.exists()){
+            return null;
+        }
+        return FileUtil.file(fullFileName);
+    }
+
 
     /**
      * @param z

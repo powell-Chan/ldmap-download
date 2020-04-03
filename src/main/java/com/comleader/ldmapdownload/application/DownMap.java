@@ -46,11 +46,14 @@ public class DownMap implements ApplicationRunner {
     private int maxLv; // 最大层级
 
     @Value("${map.Lv6.flag}")
-    private boolean flag; // 记录前六级是否打开下载
+    private boolean lvFlag; // 记录前六级是否打开下载
+
+    @Value("${map.download.append}")
+    private boolean appendFlag; // 是否是继续下载
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        if (flag){
+        if (lvFlag){
             return;
         }
 
@@ -163,11 +166,14 @@ public class DownMap implements ApplicationRunner {
             try {
                 //高德地图(6：影像，7：矢量，8：影像路网)
                 imgUrl = CLStringUtil.getImgUrl(z, x, y);
-                File file = CLStringUtil.getFullFile(z, x, y);
+                File file = appendFlag ? CLStringUtil.getFullFileNotExist(z,x,y):CLStringUtil.getFullFile(z, x, y);
 
                 // 开始下载地图
-                HttpUtil.downImageByGet(imgUrl, file);
-                return imgUrl + " Success";
+                if (file != null){
+                    HttpUtil.downImageByGet(imgUrl, file);
+                    return imgUrl + " Success";
+                }
+                return imgUrl + " Loaded";
             } catch (Exception e) {
                 //log.error(imgUrl + " Down Failed");
                 errResults.add("Failed: " + imgUrl + " ErrorMsg >> " + e.getMessage());
