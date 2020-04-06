@@ -94,17 +94,20 @@ public class DownMap implements ApplicationRunner {
                 }
             }
         }
+
         // 主线程阻塞等待执行完成
         for (Future<String> future : futures) {
             Future<String> take = completionService.take();
             String result = take.get();
             System.out.println(result);
         }
+
         // 打印下载失败的结果
         System.out.println("Falid download List:");
         for (String errResult : errResults) {
             System.out.println(errResult);
         }
+
         System.out.println("Falid count num: " + errResults.size());
         long end = System.currentTimeMillis();
 

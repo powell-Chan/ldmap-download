@@ -18,7 +18,7 @@
 2.  项目运行后需要在窗口中输入要下载区域的经纬度（矩形区域，左下角的经纬度与右上角的经纬度）；
 3.  download-map.properties中有一些关于本地存储、地图类型的设置；
 4.  具体的使用流程参见 https://www.iqiyi.com/v_19rrmucyoc.html?vfm=2008_aldbd
-
+5.  主要下载逻辑在DownMap中
 
 #### 参与贡献
 
