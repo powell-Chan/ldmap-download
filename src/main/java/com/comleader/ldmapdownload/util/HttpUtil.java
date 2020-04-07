@@ -3,6 +3,7 @@ package com.comleader.ldmapdownload.util;
 import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -11,9 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.SQLOutput;
 
 /**
@@ -63,6 +62,8 @@ public class HttpUtil {
                 ins =  response.getEntity().getContent();
                 // 写入图片
                 FileUtil.writeFromStream(ins, file);
+            }else {
+                response.getEntity();
             }
         } finally {
             // 释放资源
@@ -74,6 +75,38 @@ public class HttpUtil {
             }
         }
 
+    }
+
+    public static void writeFromStream(InputStream is, File file) {
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            // 下载图片到本地存储
+            bis  = new BufferedInputStream(is);
+            bos = new BufferedOutputStream(new FileOutputStream(file));
+            byte[] buffer = new byte[1024];
+            int len = -1;
+            //while ((len = bis.read(buffer)) != -1) {
+            while ((len = bis.read(buffer)) > 0) {
+                bos.write(buffer, 0, len);
+                bos.flush();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                // 释放资源
+                if (bos != null){
+                    bos.close();
+                }
+                if (bis != null){
+                    bis.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

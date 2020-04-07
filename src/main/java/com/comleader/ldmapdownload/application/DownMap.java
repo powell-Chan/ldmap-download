@@ -151,6 +151,11 @@ public class DownMap implements ApplicationRunner {
     }
 
 
+    /**
+     * @description:  下载地图的Callable,该类用于异步多线程下载地图
+     * @author: zhanghang
+     * @date: 2020/4/7
+     **/
     class DownMapCallable implements Callable<String> {
 
         private int z;
@@ -178,7 +183,7 @@ public class DownMap implements ApplicationRunner {
                 }
                 return imgUrl + " Loaded";
             } catch (Exception e) {
-                //log.error(imgUrl + " Down Failed");
+                e.printStackTrace();
                 errResults.add("Failed: " + imgUrl + " ErrorMsg >> " + e.getMessage());
                 return imgUrl + " Down Failed";
             }

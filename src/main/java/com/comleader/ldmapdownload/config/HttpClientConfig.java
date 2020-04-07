@@ -180,7 +180,7 @@ public class HttpClientConfig {
 
                 setConnectionRequestTimeout(connectionRequestTimeout).
 
-                setSocketTimeout(socketTimeout);
+                setSocketTimeout(socketTimeout).setRedirectsEnabled(true);
 
     }
 
