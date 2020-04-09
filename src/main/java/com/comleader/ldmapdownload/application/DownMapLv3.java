@@ -30,8 +30,8 @@ public class DownMapLv3 {
      **/
     public static void downLoad() {
         new Thread(() -> {
-            for (int y = 0; y <= 7; y++) { // Y轴
-                for (int x = 0; x <= 7; x++) { // X轴
+            for (int x = 0; x <= 7; x++) { // Y轴
+                for (int y = 0; y <= 7; y++) { // X轴
                     //高德地图(6：影像，7：矢量，8：影像路网)
                     String imgUrl = CLStringUtil.getImgUrl(z, x, y);
                     File file = CLStringUtil.getFullFile(z, x, y);

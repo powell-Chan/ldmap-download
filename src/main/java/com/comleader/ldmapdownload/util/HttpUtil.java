@@ -77,36 +77,4 @@ public class HttpUtil {
 
     }
 
-    public static void writeFromStream(InputStream is, File file) {
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-        try {
-            // 下载图片到本地存储
-            bis  = new BufferedInputStream(is);
-            bos = new BufferedOutputStream(new FileOutputStream(file));
-            byte[] buffer = new byte[1024];
-            int len = -1;
-            //while ((len = bis.read(buffer)) != -1) {
-            while ((len = bis.read(buffer)) > 0) {
-                bos.write(buffer, 0, len);
-                bos.flush();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            try {
-                // 释放资源
-                if (bos != null){
-                    bos.close();
-                }
-                if (bis != null){
-                    bis.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 }

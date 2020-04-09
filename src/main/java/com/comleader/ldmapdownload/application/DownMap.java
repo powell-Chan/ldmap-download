@@ -59,13 +59,25 @@ public class DownMap implements ApplicationRunner {
 
         es = Executors.newFixedThreadPool(threadNum);
         completionService = new ExecutorCompletionService<>(es);
+
         // 监听控制台输入下载区域
         Scanner sc = new Scanner(System.in);
         System.out.println("经纬度格式如: 110.391,36.527");
-        System.out.println("请输入要下载地图的左下角经纬度:");
-        String leftbottom = sc.next();
-        System.out.println("请输入要下载地图的右上角经纬度:");
-        String righttop = sc.next();
+        String leftbottom = null;
+        String righttop = null;
+        while (true) {
+            System.out.println("请输入要下载地图的左下角经纬度:");
+            leftbottom = sc.next();
+            System.out.println("请输入要下载地图的右上角经纬度:");
+            righttop = sc.next();
+            String errMsg = verify(leftbottom,righttop);
+            // 简单校验下载是否正确
+            if (errMsg == null){
+                break;
+            }
+            System.out.println(errMsg);
+            System.out.println("请重新输入!");
+        }
 
         System.out.println("开始下载经纬度: {" + leftbottom + "," + righttop + "}");
         // 左下角经度，纬度，右上角经度，纬度。
@@ -81,12 +93,12 @@ public class DownMap implements ApplicationRunner {
         for (int z = minLv; z <= maxLv; z++) { // 层级
             //计算行列号(使用瓦片的中心点经纬度计算)
             //四个坐标划定了一个矩形区域
-            int minY = getOSMTileYFromLatitude(Double.valueOf(rightLngLat[0].trim()), z);
+            int minY = getOSMTileYFromLatitude(Double.valueOf(rightLngLat[1].trim()), z);
             int maxY = getOSMTileYFromLatitude(Double.valueOf(leftLngLat[1].trim()), z);
             int minX = getOSMTileXFromLongitude(Double.valueOf(leftLngLat[0].trim()), z);
             int maxX = getOSMTileXFromLongitude(Double.valueOf(rightLngLat[0].trim()), z);
-            for (int y = minY; y <= maxY; y++) { // Y轴
-                for (int x = minX; x <= maxX; x++) { // X轴
+            for (int x = minX; x <= maxX; x++) { // Y轴
+                for (int y = minY; y <= maxY; y++) { // X轴
                     // 多线程异步执行下载
                     Future<String> resultFulture = completionService.submit(new DownMapCallable(z, x, y));
                     // 加入集合中
@@ -115,6 +127,24 @@ public class DownMap implements ApplicationRunner {
         System.out.println("All Task Finished!! \nTotal Time:" + (end - start) / 1000 + " s");
         System.exit(0);
     }
+
+    // 校验格式是否正确
+    private String verify(String leftbottom, String righttop) {
+        String[] leftLngLat = leftbottom.contains(",") ? leftbottom.split(",") : leftbottom.split("，");
+        String[] rightLngLat = righttop.contains(",") ? righttop.split(",") : righttop.split("，");
+        // 左下角经纬度
+        Double leftLng = Double.valueOf(leftLngLat[0].trim());
+        Double leftLat = Double.valueOf(leftLngLat[1].trim());
+        // 右上角经纬度
+        Double rightLng = Double.valueOf(rightLngLat[0].trim());
+        Double rightLat = Double.valueOf(rightLngLat[1].trim());
+        if (leftLng > rightLng || leftLat > rightLat){
+            return "坐标错误,右上角的精度和纬度必须大于左下角的精度和纬度!";
+        }
+
+        return null;
+    }
+
 
     /**
      * 计算分辨率
@@ -171,10 +201,11 @@ public class DownMap implements ApplicationRunner {
         @Override
         public String call() throws Exception {
             String imgUrl = null;
+            File file = null;
             try {
                 //高德地图(6：影像，7：矢量，8：影像路网)
                 imgUrl = CLStringUtil.getImgUrl(z, x, y);
-                File file = appendFlag ? CLStringUtil.getFullFileNotExist(z,x,y):CLStringUtil.getFullFile(z, x, y);
+                file = appendFlag ? CLStringUtil.getFullFileNotExist(z,x,y):CLStringUtil.getFullFile(z, x, y);
 
                 // 开始下载地图
                 if (file != null){
@@ -184,6 +215,9 @@ public class DownMap implements ApplicationRunner {
                 return imgUrl + " Loaded";
             } catch (Exception e) {
                 e.printStackTrace();
+                if (file != null && file.exists()){
+                    file.delete();
+                }
                 errResults.add("Failed: " + imgUrl + " ErrorMsg >> " + e.getMessage());
                 return imgUrl + " Down Failed";
             }
