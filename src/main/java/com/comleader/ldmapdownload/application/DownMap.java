@@ -123,7 +123,8 @@ public class DownMap implements ApplicationRunner {
         System.out.println("Falid count num: " + errResults.size());
         long end = System.currentTimeMillis();
 
-        // 执行退出
+        // 打印结果,执行退出
+        System.out.println("Total Size: "+ CLStringUtil.getDownTotalSizeUnitsM() +"("+CLStringUtil.getDownTotalSizeUnitsB()+")");
         System.out.println("All Task Finished!! \nTotal Time:" + (end - start) / 1000 + " s");
         System.exit(0);
     }

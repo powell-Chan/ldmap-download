@@ -1,13 +1,15 @@
 package com.comleader.ldmapdownload.util;
 
 import cn.hutool.core.io.FileUtil;
-import org.omg.CORBA.PUBLIC_MEMBER;
+import cn.hutool.core.math.MathUtil;
+import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.text.DecimalFormat;
 
 /**
  * @ClassName LDStringUtil
@@ -129,6 +131,38 @@ public class CLStringUtil {
             str = "0" + str;
         }
         return str;
+    }
+
+    /**
+     * @description: 下载文件的M级大小 
+     * @param 
+     * @return: java.lang.String
+     * @author: zhanghang
+     * @date: 2020/4/9
+     **/
+    public static String getDownTotalSizeUnitsM(){
+        File file = FileUtil.file(BASE_PATH);
+        if (file != null){
+            long size = FileUtil.size(file);
+            return new DecimalFormat("#.00").format(size/1024.0/1024.0) + " M";
+        }
+        return null;
+    }
+
+    /**
+     * @description: 下载文件的字节大小 
+     * @param
+     * @return: java.lang.String
+     * @author: zhanghang
+     * @date: 2020/4/9
+     **/
+    public static String getDownTotalSizeUnitsB(){
+        File file = FileUtil.file(BASE_PATH);
+        if (file != null){
+            long size = FileUtil.size(file);
+            return new DecimalFormat("#,###").format(size) + " 字节";
+        }
+        return null;
     }
 
 }
