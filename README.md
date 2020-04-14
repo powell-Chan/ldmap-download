@@ -14,15 +14,16 @@
 
 #### 使用说明
 
-1.  通过修改配置文件来选择下载地图的类型，（第一次运行需要修改download-map.properties中map.Lv6.flag为true来下载大地图框架）；
-2.  项目运行后需要在窗口中输入要下载区域的经纬度（矩形区域，左下角的经纬度与右上角的经纬度）；
-3.  download-map.properties中有一些关于本地存储、地图类型的设置；
-4.  具体的使用流程参见 https://www.iqiyi.com/v_19rrmucyoc.html?vfm=2008_aldbd
-5.  主要下载逻辑在DownMap中
+1.  选择下载区域以及保存路径
+2.  在config/download-map.properties配置文件中配置file.mapImgPath以发布地图
+3.  地图默认自动发布，如果修改了发布路径需要重启项目；
+4.  地图发布后可以在前端JS API中使用‘http://localhost:9000/img/{z}/{x}/{y}.png’来访问加载
+5.  此功能适用于大部分地图，默认是高德，如需修改下载地图可以选择config/download-map.properties中修改map.baseurl来选择；
 
 #### 参与贡献
 
 1.  Deason.Z构建了此项目
+2.  Deason.Z目前在维护项目的运行
 
 #### 声明
 本项目属于个人研究使用，请勿商用。
