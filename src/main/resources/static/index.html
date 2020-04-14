@@ -107,7 +107,7 @@
     var websocket = null;
 
     if ('WebSocket' in window) {
-        websocket = new WebSocket("ws://127.0.0.1:9000/downLoadMapSocket/downloadMap");
+        websocket = new WebSocket("ws://127.0.0.1:9090/downLoadMapSocket/downloadMap");
         // 监听服务器端发送来的消息
         websocket.onmessage = function (event) {
 
