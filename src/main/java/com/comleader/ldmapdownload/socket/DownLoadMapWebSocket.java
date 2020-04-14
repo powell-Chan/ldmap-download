@@ -23,7 +23,7 @@ import java.util.TimerTask;
 
 /**
  * @ClassName WebSocket
- * @Description: WebSocket服务类,统一功能: 0: 代表请求下载文件校验信息,1代表
+ * @Description: WebSocket服务类, 统一功能: 0: 代表请求下载文件校验信息,1代表
  * @Author zhanghang
  * @Date 2020/3/31
  * @Version V1.0
@@ -111,21 +111,23 @@ public class DownLoadMapWebSocket {
             SocketResultData socketData = JSONUtil.toBean(message, SocketResultData.class);
             // 校验下载信息(操作类型为0)
             if (socketData.getType() == OperationTypeEnum.DOWNLOAD_READY.getType()) {
-                if (DownMapService.isBusy){
+                if (DownMapService.isBusy) {
                     // 线程未执行完成
                     return;
                 }
-                AppointSending(JSONUtil.toJsonStr(new SocketResultData(OperationTypeEnum.SYS_SUCCESS,"准备下载",null)));
+                AppointSending(JSONUtil.toJsonStr(new SocketResultData(OperationTypeEnum.SYS_SUCCESS, "准备下载", null)));
+                //initDownLoad();
+                DownMapService.readyCountFile = 0;
                 Map<String, Object> body = downMapService.readyDownLoad(socketData.getBody());
                 // 校验信息结果
-                SocketResultData resultData = new SocketResultData(OperationTypeEnum.DOWNLOAD_READY,body);
+                SocketResultData resultData = new SocketResultData(OperationTypeEnum.DOWNLOAD_READY, body);
                 // 返回结果
                 AppointSending(JSONUtil.toJsonStr(resultData));
             }
 
             //  停止下载(5)
             if (socketData.getType() == OperationTypeEnum.DOWNLOAD_STOP.getType()) {
-                if (!DownMapService.isBusy){
+                if (!DownMapService.isBusy) {
                     // 线程未执行完成
                     AppointSending(JSONUtil.toJsonStr(new SocketResultData(OperationTypeEnum.SYS_SUCCESS, "暂无下载任务", null)));
                     return;
@@ -139,25 +141,25 @@ public class DownLoadMapWebSocket {
             }
 
             // 操作类型为1,开始下载
-            if (socketData.getType() == OperationTypeEnum.DOWNLOAD_MAP.getType()){
-                if (DownMapService.isBusy){
+            if (socketData.getType() == OperationTypeEnum.DOWNLOAD_MAP.getType()) {
+                if (DownMapService.isBusy) {
                     // 线程未执行完成
-                        return;
+                    return;
                 }
-                initDownLoad();
+                initDownLoad(); // 初始化下载信息
                 // 下载和发送地图(由于是单机，只有一个session，所以需要开启一个线程执行，否则执行期间服务器接收不到其他命令)
                 thread = new Thread(() -> {
                     try {
-                        downLoadMap(socketData,session);
+                        downLoadMap(socketData, session);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        AppointSending(JSONUtil.toJsonStr(new SocketResultData(OperationTypeEnum.SYS_ERROR,"系统异常!!",null)));
+                        AppointSending(JSONUtil.toJsonStr(new SocketResultData(OperationTypeEnum.SYS_ERROR, "系统异常!!", null)));
                     }
                 });
                 thread.start();
             }
         } catch (Exception e) {
-            AppointSending(JSONUtil.toJsonStr(new SocketResultData(OperationTypeEnum.SYS_ERROR,"系统异常!!",null)));
+            AppointSending(JSONUtil.toJsonStr(new SocketResultData(OperationTypeEnum.SYS_ERROR, "系统异常!!", null)));
             e.printStackTrace();
         }
     }
@@ -170,15 +172,15 @@ public class DownLoadMapWebSocket {
             @Override
             public void run() {
                 // 发送了停止命令或者已经完成
-                if (DownMapService.stoped || DownMapService.finished){
+                if (DownMapService.stoped || DownMapService.finished) {
                     speedTimer.cancel();
-                    return;
+                }else {
+                    // 发送速度
+                    SocketResultData speed = new SocketResultData(OperationTypeEnum.SYS_SUCCESS, "下载速度" + DownMapService.speed + "张/s", null);
+                    AppointSending(JSONUtil.toJsonStr(speed));
                 }
-                // 发送速度
-                SocketResultData speed = new SocketResultData(OperationTypeEnum.SYS_SUCCESS, "下载速度"+DownMapService.speed + "张/s", null);
-                AppointSending(JSONUtil.toJsonStr(speed));
             }
-        },1000,1000);
+        }, 1000, 1000);
         // 创建定时任务向前端发送进度
         Timer scheduleTimer = new Timer();
         // 每隔0.2秒汇报一次
@@ -186,23 +188,23 @@ public class DownLoadMapWebSocket {
             @Override
             public void run() {
                 // 发送了停止命令或者已经完成
-                if (DownMapService.stoped || DownMapService.finished){
+                if (DownMapService.stoped || DownMapService.finished) {
                     DownMapService.isBusy = false;
-                    SocketResultData schedule = new SocketResultData(OperationTypeEnum.DOWNLOAD_SCHEDULE, 100+"", null);
+                    SocketResultData schedule = new SocketResultData(OperationTypeEnum.DOWNLOAD_SCHEDULE, 100 + "", null);
                     AppointSending(JSONUtil.toJsonStr(schedule));
                     scheduleTimer.cancel();
-                    return;
+                } else {
+                    // 发送进度
+                    SocketResultData schedule = new SocketResultData(OperationTypeEnum.DOWNLOAD_SCHEDULE, DownMapService.schedule + "", null);
+                    AppointSending(JSONUtil.toJsonStr(schedule));
                 }
-                // 发送进度
-                SocketResultData schedule = new SocketResultData(OperationTypeEnum.DOWNLOAD_SCHEDULE, DownMapService.schedule+"", null);
-                AppointSending(JSONUtil.toJsonStr(schedule));
             }
-        },200,200);
+        }, 200, 200);
         // 发送执行结果(这里是异步阻塞的,会等待downLoad执行完成)
-        Map<String, Object> resBody = downMapService.downLoad(socketData.getBody(),session);
+        Map<String, Object> resBody = downMapService.downLoad(socketData.getBody(), session);
 
-        String msg = "下载完成，总用时"+resBody.get("totalTime")+"，总大小"+ resBody.get("totalSize")+
-                "，总用时"+resBody.get("totalTime")+"，失败个数"+resBody.get("falidNum")+"(可选择非覆盖重新下载!)";
+        String msg = "下载完成，总用时" + resBody.get("totalTime") + "，总大小" + resBody.get("totalSize") +
+                "，总用时" + resBody.get("totalTime") + "，失败个数" + resBody.get("falidNum") + "(可选择非覆盖重新下载!)";
         SocketResultData resultData = new SocketResultData(OperationTypeEnum.SYS_SUCCESS, msg, null);
         AppointSending(JSONUtil.toJsonStr(resultData));
         // 通知下载完成
@@ -211,8 +213,8 @@ public class DownLoadMapWebSocket {
 
     private static void initDownLoad() {
         HttpUtil.totalSize = 0;
-        DownMapService.finished =false;
-        DownMapService.stoped =false;
+        DownMapService.finished = false;
+        DownMapService.stoped = false;
         DownMapService.speed = 0;
         DownMapService.schedule = 0;
         DownMapService.countSuccessFile = 0;

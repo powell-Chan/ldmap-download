@@ -142,7 +142,6 @@
                 var schedule = result.message;
                 if (schedule > 100){
                     schedule = 100;
-                    socketMsgEle.innerHTML = '<p style="color: green">下载完成，请等待。。。</p>';
                 }
                 console.log(schedule);
                 $("#progressBar").width(schedule + "%");

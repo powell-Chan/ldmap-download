@@ -30,7 +30,6 @@ public class DownMapLv4 {
                     //高德地图(6：影像，7：矢量，8：影像路网)
                     String imgUrl = CLStringUtil.getImgUrl(z, x, y);
                     File file = CLStringUtil.getFullFileNotExist(z, x, y);
-                    System.out.println(imgUrl);
 
                     // 开始下载地图
                     if (file != null) {
@@ -39,7 +38,10 @@ public class DownMapLv4 {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        return;
                     }
+                    System.out.println(imgUrl+" 基础地图加载");
+
                 }
             }
         }).start();

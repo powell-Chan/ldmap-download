@@ -139,17 +139,16 @@ public class DownMapService {
         for (Future<String> future : futures) {
             if (DownMapService.stoped || !session.isOpen()) {
                 DownMapService.finished = true;
+                // 如果发布了取消任务，则取消任务
                 stopDownLoad(futures);
                 break;
             }
-            completionService.take();
             Future<String> take = completionService.take();
             String result = take.get();
             speed++; // 累计到下载进度上
             countSuccessFile++;
             System.out.println(result);
         }
-        // 如果发布了取消任务，则取消任务
         // 结束定时器
         speedTimer.cancel();
         long end = System.currentTimeMillis();
@@ -162,6 +161,9 @@ public class DownMapService {
         resBody.put("totalSize", CLStringUtil.getDownTotalSize());
         // 完成标志
         this.finished = true;
+        log.info("falidNum > "+errResults.size());
+        log.info("totalTime > "+(end - start) / 1000 + " s");
+        log.info("totalSize > "+CLStringUtil.getDownTotalSize());
         return resBody;
     }
 
@@ -233,7 +235,7 @@ public class DownMapService {
             try {
                 if (DownMapService.stoped) { // 停止下载的命令
                     DownMapService.finished = true;
-                    return null;
+                    return imgUrl + " Loaded";
                 }
                 //高德地图(6：影像，7：矢量，8：影像路网)
                 imgUrl = CLStringUtil.getImgUrl(z, x, y);

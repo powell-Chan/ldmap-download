@@ -31,7 +31,6 @@ public class DownMapLv6Runner implements ApplicationRunner {
         if (!flag){
             return;
         }
-
         DownMapLv3.downLoad();
         DownMapLv4.downLoad();
         DownMapLv5.downLoad();
