@@ -38,9 +38,8 @@ public class DownMapLv4 {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        return;
+                        System.out.println(imgUrl+" 基础地图加载");
                     }
-                    System.out.println(imgUrl+" 基础地图加载");
 
                 }
             }
