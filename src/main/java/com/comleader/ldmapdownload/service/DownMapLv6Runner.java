@@ -36,6 +36,5 @@ public class DownMapLv6Runner implements ApplicationRunner {
         DownMapLv4.downLoad();
         DownMapLv5.downLoad();
         DownMapLv6.downLoad();
-
     }
 }

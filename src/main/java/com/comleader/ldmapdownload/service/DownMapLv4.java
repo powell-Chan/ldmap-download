@@ -29,14 +29,16 @@ public class DownMapLv4 {
                 for (int y = 0; y <= 9; y++) { // X轴
                     //高德地图(6：影像，7：矢量，8：影像路网)
                     String imgUrl = CLStringUtil.getImgUrl(z, x, y);
-                    File file = CLStringUtil.getFullFile(z, x, y);
+                    File file = CLStringUtil.getFullFileNotExist(z, x, y);
                     System.out.println(imgUrl);
 
                     // 开始下载地图
-                    try {
-                        HttpUtil.downImageByGet(imgUrl, file);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (file != null) {
+                        try {
+                            HttpUtil.downImageByGet(imgUrl, file);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
