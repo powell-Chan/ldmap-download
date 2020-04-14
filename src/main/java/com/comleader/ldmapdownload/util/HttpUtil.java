@@ -37,6 +37,8 @@ public class HttpUtil {
     // 自定义一个静态载体,用来承载Spring管理的类
     private static RequestConfig staticRequestConfig;
 
+    public static volatile int totalSize = 0;
+
 
     //当容器实例化当前受管Bean时@PostConstruct注解的方法会被自动触发，借此来实现静态变量初始化
     @PostConstruct
@@ -73,6 +75,8 @@ public class HttpUtil {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            // 累加总文件大小
+            totalSize += FileUtil.size(file);
         }
 
     }

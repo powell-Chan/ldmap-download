@@ -1,7 +1,5 @@
-package com.comleader.ldmapdownload.application;
+package com.comleader.ldmapdownload.service;
 
-import com.comleader.ldmapdownload.util.CLStringUtil;
-import com.comleader.ldmapdownload.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -9,12 +7,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.*;
 
 /**
  * @ClassName DownMap

@@ -1,11 +1,7 @@
-package com.comleader.ldmapdownload.application;
+package com.comleader.ldmapdownload.service;
 
 import com.comleader.ldmapdownload.util.CLStringUtil;
 import com.comleader.ldmapdownload.util.HttpUtil;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 
@@ -16,9 +12,9 @@ import java.io.File;
  * @Date 2020/4/3
  * @Version V1.0
  **/
-public class DownMapLv4 {
+public class DownMapLv6 {
 
-    private static int z = 4;
+    private static int z = 6;
 
     /**
      * @description: 下载第四级的Map
@@ -29,8 +25,8 @@ public class DownMapLv4 {
      **/
     public static void downLoad() {
         new Thread(() -> {
-            for (int x = 0; x <= 15; x++) { // Y轴
-                for (int y = 0; y <= 9; y++) { // X轴
+            for (int x = 45; x <= 57; x++) { // Y轴
+                for (int y = 20; y <= 28; y++) { // X轴
                     //高德地图(6：影像，7：矢量，8：影像路网)
                     String imgUrl = CLStringUtil.getImgUrl(z, x, y);
                     File file = CLStringUtil.getFullFile(z, x, y);
