@@ -30,7 +30,6 @@ public class DownMapLv5 {
                     //高德地图(6：影像，7：矢量，8：影像路网)
                     String imgUrl = CLStringUtil.getImgUrl(z, x, y);
                     File file = CLStringUtil.getFullFileNotExist(z, x, y);
-                    System.out.println(imgUrl);
 
                     // 开始下载地图
                     if (file != null) {
