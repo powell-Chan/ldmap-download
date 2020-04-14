@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>路径轨迹回放</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="../leaflet/dist/leaflet.css">
+		<script type="text/javascript" src="../leaflet/dist/leaflet.js"></script>
+		<script type="text/javascript" src="../customLib/markerTrack.js"></script>
+		<script type="text/javascript" src="../customLib/em.geometryutil.js"></script>
+	</head>
+
+	<style>
+	    body {
+	        margin: 0;
+	        padding: 0;
+	    }
+	
+	    #map {
+	        position: absolute;
+	        top: 0;
+	        bottom: 0;
+	        width: 100%;
+	    }
+	</style>
+
+	<body>
+
+		<div id='map'></div>
+
+
+		<script type="text/javascript">
+			
+			/* 这块代码是引入地图的,根据自己的项目来就好(我的项目里面是离线地图) */
+			// --start引入地图--
+			var url = 'http://localhost:9000/img/{z}/{x}/{y}.png';
+			// var url = '"http://webrd0{s}.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scale=1&style=8';
+			var map = L.map('map',{
+				center: [34.694,113.587],
+				zoom: 6,
+				zoomControl: false
+			});
+			//将图层加载到地图上，并设置最大的聚焦还有map样式
+			L.tileLayer(url, {
+				maxZoom: 18,
+				minZoom: 3
+			}).addTo(map);
+			// --end引入地图--
+			
+			// 在地图上打上一个坐标
+			var marker = L.marker([34.694,113.587],{title: 'title'}).addTo(map)
+			    .bindPopup('Hello world ~');
+				marker.bindTooltip("my tooltip text",{
+					permanent: true
+				}).openTooltip();
+				
+			// 运动的轨迹
+			var polyline = L.polyline([[34.694,113.587],[38.694,113.587],[37.694,115.587]],{color: 'red'}).addTo(map);
+			
+			// 轨迹运动的图标
+			var m = L.marker([34.694,113.587],{icon:L.icon({
+			        iconUrl:'img/run.png',
+			        iconAnchor: [25, 15],
+			    })}).addTo(map);
+			
+			//添加一条线段也记录已经路过的点
+			var passed=L.polyline([[]],{color:'yellow'}).addTo(map);
+			m.on('update_position',function (e) {
+			    //每次坐标更新。然后也更新路径
+			    passed.setLatLngs(e.path);
+			});
+			
+			// 开始运动
+			m.moveAlong(polyline,300000);
+			
+		</script>
+	</body>
+</html>
