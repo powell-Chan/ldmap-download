@@ -96,6 +96,8 @@ public class DownLoadMapWebSocket {
     @OnClose
     public void OnClose() {
         DownMapService.stoped = true;
+        DownMapService.finished = true;
+        DownMapService.isBusy = false;
         log.info("[WebSocket] 退出成功");
     }
 
@@ -177,7 +179,7 @@ public class DownLoadMapWebSocket {
             @Override
             public void run() {
                 // 发送了停止命令或者已经完成
-                if (DownMapService.stoped || DownMapService.finished) {
+                if (DownMapService.stoped || DownMapService.finished || !session.isOpen()) {
                     DownMapService.isBusy = false;
                     SocketResultData schedule = new SocketResultData(OperationTypeEnum.DOWNLOAD_SCHEDULE, 100 + "", null);
                     AppointSending(JSONUtil.toJsonStr(schedule));
@@ -195,8 +197,8 @@ public class DownLoadMapWebSocket {
             @Override
             public void run() {
                 // 发送了停止命令或者已经完成
-                if (DownMapService.stoped || DownMapService.finished) {
-                    speedTimer.purge();
+                if (DownMapService.stoped || DownMapService.finished || !session.isOpen()) {
+                    speedTimer.cancel();
                 }else {
                     // 发送速度
                     SocketResultData speed = new SocketResultData(OperationTypeEnum.SYS_SUCCESS, "下载速度" + DownMapService.speed + "张/s", null);

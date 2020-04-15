@@ -147,16 +147,16 @@ public class CLStringUtil {
     public static String getDownTotalSize() {
         double size = HttpUtil.totalSize / 1024.0;
         if (size < 1024) {
-            return new DecimalFormat("#,##").format(size) + "K";
+            return new DecimalFormat("#.##").format(size) + "K";
         } else if (size < 1024 * 1024) {
             size = size / 1024.0;
-            return new DecimalFormat("#,##").format(size) + "M";
+            return new DecimalFormat("#.##").format(size) + "M";
         } else if (size < 1024 * 1024 * 1024) {
             size = size / 1024.0 / 1024.0;
-            return new DecimalFormat("#,##").format(size) + "G";
+            return new DecimalFormat("#.##").format(size) + "G";
         } else {
             size = size / 1024.0 / 1024.0 / 1024.0;
-            return new DecimalFormat("#,##").format(size) + "T";
+            return new DecimalFormat("#.##").format(size) + "T";
         }
     }
 
@@ -196,15 +196,18 @@ public class CLStringUtil {
      **/
     public static String countFileSize(int countFileNum) {
         // 平均每个图片20K
-        long countSize = countFileNum * 20;
-        if (countSize < 1024) {
-            return countSize + "K";
-        } else if (countSize < 1024 * 1024) {
-            countSize = countSize / 1024;
-            return countSize + "M";
+        double size = countFileNum * 20;
+        if (size < 1024) {
+            return new DecimalFormat("#.##").format(size) + "K";
+        } else if (size < 1024 * 1024) {
+            size = size / 1024.0;
+            return new DecimalFormat("#.##").format(size) + "M";
+        } else if (size < 1024 * 1024 * 1024) {
+            size = size / 1024.0 / 1024.0;
+            return new DecimalFormat("#.##").format(size) + "G";
         } else {
-            countSize = countSize / 1024 / 1024;
-            return countSize + "G";
+            size = size / 1024.0 / 1024.0 / 1024.0;
+            return new DecimalFormat("#.##").format(size) + "T";
         }
     }
 

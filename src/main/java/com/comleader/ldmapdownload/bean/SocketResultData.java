@@ -3,9 +3,8 @@ package com.comleader.ldmapdownload.bean;
 import com.comleader.ldmapdownload.util.OperationTypeEnum;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.concurrent.Future;
 
 /**
  * @ClassName ResultData
@@ -80,21 +79,4 @@ public class SocketResultData  implements Serializable {
         this.body = body;
     }
 
-    //public static void main(String[] args) throws InterruptedException {
-    //
-    //    testTask("Task 1");
-    //    testTask("Task 2");
-    //}
-
-    private static void testTask(String name) throws InterruptedException {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                System.out.println(name);
-            }
-        }, 0, 500);
-        Thread.sleep(2000);
-        timer.cancel();
-    }
 }

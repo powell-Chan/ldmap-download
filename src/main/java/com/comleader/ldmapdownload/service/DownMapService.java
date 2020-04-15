@@ -34,7 +34,7 @@ public class DownMapService {
     // 执行任务的线程池
     private ExecutorService es;
 
-    private CompletionService<String> completionService;
+    private CompletionService<Integer> completionService;
 
     //private volatile Map<String, String> errResults = new HashMap<>();
     private List<String> errResults = new CopyOnWriteArrayList<>();
@@ -67,7 +67,7 @@ public class DownMapService {
      * @param body
      * @param session
      * @description: 下载地图文件保存到本地
-     * @return: java.util.Map<java.lang.String   ,   java.lang.Object>
+     * @return: java.util.Map<java.lang.String               ,               java.lang.Object>
      * @author: zhanghang
      * @date: 2020/4/13
      **/
@@ -79,7 +79,7 @@ public class DownMapService {
         //记录返回结果
         Map<String, Object> resBody = new HashMap<>();
         //记录异步结果
-        List<Future<String>> futures = new ArrayList<>();
+        List<Future<Integer>> futures = new ArrayList<>();
         // 记录总用时
         long start = System.currentTimeMillis();
 
@@ -106,12 +106,10 @@ public class DownMapService {
             int minX = CLStringUtil.getOSMTileXFromLongitude(minLng, z);
             int maxX = CLStringUtil.getOSMTileXFromLongitude(maxLng, z);
             for (int x = minX; x <= maxX; x++) { // Y轴
-                for (int y = minY; y <= maxY; y++) { // X轴
-                    // 多线程异步执行下载
-                    Future<String> resultFulture = completionService.submit(new DownMapCallable(z, x, y));
-                    // 加入集合中
-                    futures.add(resultFulture);
-                }
+                // 多线程异步执行下载
+                Future<Integer> resultFulture = completionService.submit(new DownMapCallable(z, x, minY, maxY));
+                // 加入集合中
+                futures.add(resultFulture);
             }
         }
         // 启动一个定时器,每秒刷新下载速度
@@ -119,7 +117,7 @@ public class DownMapService {
         speedTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (DownMapService.stoped || DownMapService.finished) {
+                if (DownMapService.stoped || DownMapService.finished || !session.isOpen()) {
                     speedTimer.cancel();
                     return;
                 }
@@ -128,31 +126,37 @@ public class DownMapService {
         }, 1000, 1000);
         // 刷新进度
         scheduleTimer = new Timer();
+        StringBuffer stringBuffer = new StringBuffer();
         scheduleTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (DownMapService.stoped || DownMapService.finished) {
+                if (DownMapService.stoped || DownMapService.finished || !session.isOpen()) {
                     scheduleTimer.cancel();
                     return;
                 }
                 DownMapService.schedule = countSuccessFile * 100 / readyCountFile; // 下载的进度
+                stringBuffer.setLength(0); // 重新拼接进度
+                stringBuffer.append("\r当前进度：" + DownMapService.schedule + "%\t");
+                for (int i = 0; i < DownMapService.schedule; i++) {
+                    stringBuffer.append("]");
+                }
+                stringBuffer.append(countSuccessFile +"/"+readyCountFile);
+                System.out.print(stringBuffer);
             }
         }, 200, 200);
 
         // 主线程阻塞等待执行完成
-        for (Future<String> future : futures) {
+        for (Future<Integer> future : futures) {
             if (DownMapService.stoped || !session.isOpen()) {
                 DownMapService.finished = true;
                 // 如果发布了取消任务，则取消任务
                 stopDownLoad(futures);
                 break;
             }
-            Future<String> take = completionService.take();
-            String result = take.get();
-            speed++; // 累计到下载进度上
-            countSuccessFile++;
-            System.out.println(result);
+            Future<Integer> take = completionService.take();
+            Integer result = take.get();
         }
+
         // 完成标志
         DownMapService.finished = true;
         // 结束定时器
@@ -166,14 +170,18 @@ public class DownMapService {
         resBody.put("totalTime", (end - start) / 1000 + " s");
         // 总文件大小
         resBody.put("totalSize", CLStringUtil.getDownTotalSize());
-        log.info("falidNum > "+errResults.size());
-        log.info("totalTime > "+(end - start) / 1000 + " s");
-        log.info("totalSize > "+CLStringUtil.getDownTotalSize());
+        log.info("FalidList > ");
+        for (String errResult : errResults) {
+            System.out.println(errResult + " DownLoadFaild");
+        }
+        log.info("falidNum > " + errResults.size());
+        log.info("totalTime > " + (end - start) / 1000 + " s");
+        log.info("totalSize > " + CLStringUtil.getDownTotalSize());
         return resBody;
     }
 
-    private void stopDownLoad(List<Future<String>> futures) {
-        for (Future<String> future : futures) {
+    private void stopDownLoad(List<Future<Integer>> futures) {
+        for (Future<Integer> future : futures) {
             if (!future.isDone()) {
                 future.cancel(false);
             }
@@ -184,7 +192,7 @@ public class DownMapService {
     /**
      * @param body
      * @description: 下载信息确认
-     * @return: java.util.Map<java.lang.String   ,   java.lang.Object>
+     * @return: java.util.Map<java.lang.String               ,               java.lang.Object>
      * @author: zhanghang
      * @date: 2020/4/13
      **/
@@ -221,45 +229,50 @@ public class DownMapService {
      * @author: zhanghang
      * @date: 2020/4/7
      **/
-    class DownMapCallable implements Callable<String> {
+    class DownMapCallable implements Callable<Integer>, Cloneable {
 
         private int z;
         private int x;
-        private int y;
+        private int minY;
+        private int maxY;
 
-        public DownMapCallable(int z, int x, int y) {
+        public DownMapCallable(int z, int x, int minY, int maxY) {
             this.z = z;
             this.x = x;
-            this.y = y;
+            this.minY = minY;
+            this.maxY = maxY;
         }
 
+        // 1: 下载完成  0: 地图已经下载过  2: 异常
         @Override
-        public String call() throws Exception {
+        public Integer call() throws Exception {
             String imgUrl = null;
             File file = null;
-            try {
-                if (DownMapService.stoped) { // 停止下载的命令
-                    DownMapService.finished = true;
-                    return imgUrl + " Loaded";
-                }
-                //高德地图(6：影像，7：矢量，8：影像路网)
-                imgUrl = CLStringUtil.getImgUrl(z, x, y);
-                file = (!appendFlag) ? CLStringUtil.getFullFileNotExist(z, x, y) : CLStringUtil.getFullFile(z, x, y);
+            for (int y = minY; y <= maxY; y++) {
+                try {
+                    if (DownMapService.stoped) { // 停止下载的命令
+                        DownMapService.finished = true;
+                    }
+                    //高德地图(6：影像，7：矢量，8：影像路网)
+                    imgUrl = CLStringUtil.getImgUrl(z, x, y);
+                    file = (!appendFlag) ? CLStringUtil.getFullFileNotExist(z, x, y) : CLStringUtil.getFullFile(z, x, y);
 
-                // 开始下载地图
-                if (file != null) {
-                    HttpUtil.downImageByGet(imgUrl, file);
-                    return imgUrl + " Success";
+                    // 开始下载地图
+                    if (file != null) {
+                        HttpUtil.downImageByGet(imgUrl, file);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (file != null && file.exists()) {
+                        file.delete();
+                    }
+                    errResults.add(imgUrl);
+                    log.info(e.getMessage());
                 }
-                return imgUrl + " Loaded";
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (file != null && file.exists()) {
-                    file.delete();
-                }
-                errResults.add("Failed: " + imgUrl + " ErrorMsg >> " + e.getMessage());
-                return imgUrl + " Down Failed";
+                speed++; // 累计到下载进度上
+                countSuccessFile++;
             }
+            return 1;
         }
     }
 
