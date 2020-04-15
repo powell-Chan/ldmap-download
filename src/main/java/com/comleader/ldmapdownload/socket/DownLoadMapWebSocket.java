@@ -170,21 +170,6 @@ public class DownLoadMapWebSocket {
 
     private void downLoadMap(SocketResultData socketData, Session session) throws Exception {
         // 创建定时任务向前端发送速度\进度
-        speedTimer = new Timer();
-        // 每隔三秒汇报一次
-        speedTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                // 发送了停止命令或者已经完成
-                if (DownMapService.stoped || DownMapService.finished) {
-                    speedTimer.purge();
-                }else {
-                    // 发送速度
-                    SocketResultData speed = new SocketResultData(OperationTypeEnum.SYS_SUCCESS, "下载速度" + DownMapService.speed + "张/s", null);
-                    AppointSending(JSONUtil.toJsonStr(speed));
-                }
-            }
-        }, 1000, 1000);
         // 创建定时任务向前端发送进度
         scheduleTimer = new Timer();
         // 每隔0.2秒汇报一次
@@ -203,7 +188,23 @@ public class DownLoadMapWebSocket {
                     AppointSending(JSONUtil.toJsonStr(schedule));
                 }
             }
-        }, 200, 200);
+        }, 1000, 1000);
+        speedTimer = new Timer();
+        // 每隔三秒汇报一次
+        speedTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // 发送了停止命令或者已经完成
+                if (DownMapService.stoped || DownMapService.finished) {
+                    speedTimer.purge();
+                }else {
+                    // 发送速度
+                    SocketResultData speed = new SocketResultData(OperationTypeEnum.SYS_SUCCESS, "下载速度" + DownMapService.speed + "张/s", null);
+                    AppointSending(JSONUtil.toJsonStr(speed));
+                }
+            }
+        }, 2000, 2000);
+
         // 发送执行结果(这里是异步阻塞的,会等待downLoad执行完成)
         Map<String, Object> resBody = downMapService.downLoad(socketData.getBody(), session);
 
@@ -211,6 +212,7 @@ public class DownLoadMapWebSocket {
                 "，总用时" + resBody.get("totalTime") + "，失败个数" + resBody.get("falidNum") + "(可选择非覆盖重新下载!)";
         SocketResultData resultData = new SocketResultData(OperationTypeEnum.SYS_SUCCESS, msg, null);
         AppointSending(JSONUtil.toJsonStr(resultData));
+        DownMapService.isBusy = false;
         // 通知下载完成
         AppointSending(JSONUtil.toJsonStr(new SocketResultData(OperationTypeEnum.DOWNLOAD_FINISHED)));
     }
@@ -235,8 +237,10 @@ public class DownLoadMapWebSocket {
      **/
     private void AppointSending(String message) {
         try {
-            session.getBasicRemote().sendText(message);
-        } catch (IOException e) {
+            synchronized (session){
+                session.getBasicRemote().sendText(message);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -82,22 +82,19 @@ public class SocketResultData  implements Serializable {
 
     //public static void main(String[] args) throws InterruptedException {
     //
-    //    Timer timer = new Timer();
-    //    timer.schedule(new TimerTask() {
-    //        @Override
-    //        public void run() {
-    //            System.out.println("timer start");
-    //        }
-    //    }, 0, 1000);
-    //    Thread.sleep(1000);
-    //    timer.cancel();
-    //    timer.cancel();
-    //    timer = new Timer();
-    //    timer.schedule(new TimerTask() {
-    //        @Override
-    //        public void run() {
-    //            System.out.println("after cancel");
-    //        }
-    //    }, 1000, 2000);
+    //    testTask("Task 1");
+    //    testTask("Task 2");
     //}
+
+    private static void testTask(String name) throws InterruptedException {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println(name);
+            }
+        }, 0, 500);
+        Thread.sleep(2000);
+        timer.cancel();
+    }
 }

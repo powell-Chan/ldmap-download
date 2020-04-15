@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
-    <title>EM MapDownLoader</title>
+    <title>GM MapDownLoader</title>
     <!-- jquery -->
     <script src="thirdLib/jq/jquery-3.3.1.min.js"></script>
 
@@ -135,15 +135,16 @@
 
             if (result.type == 3) { // 更新下载进度
                 var schedule = result.message;
-                if (schedule > 100){
-                    schedule = 100;
-                }
                 console.log(schedule);
+                if (schedule > 100){
+                    schedule = 99;
+                }
                 $("#progressBar").width(schedule + "%");
                 $("#progressBar").html(schedule + "%");
             }
             if (result.type == 4) { // 下载完成,隐藏进度条
-                // $("#progressDiv").hide();
+                $("#progressBar").width(100 + "%");
+                $("#progressBar").html(100 + "%");
             }
             if (result.type == 6) { // 连接信息
                 $("#filePath").val(result.message);

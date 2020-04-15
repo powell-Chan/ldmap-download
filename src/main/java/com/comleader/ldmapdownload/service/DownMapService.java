@@ -154,7 +154,7 @@ public class DownMapService {
             System.out.println(result);
         }
         // 完成标志
-        this.finished = true;
+        DownMapService.finished = true;
         // 结束定时器
         speedTimer.cancel();
         scheduleTimer.cancel();
