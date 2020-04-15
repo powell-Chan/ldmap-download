@@ -183,7 +183,7 @@ public class DownMapService {
     private void stopDownLoad(List<Future<Integer>> futures) {
         for (Future<Integer> future : futures) {
             if (!future.isDone()) {
-                future.cancel(false);
+                future.cancel(true);
             }
         }
     }
@@ -252,6 +252,7 @@ public class DownMapService {
                 try {
                     if (DownMapService.stoped) { // 停止下载的命令
                         DownMapService.finished = true;
+                        break;
                     }
                     //高德地图(6：影像，7：矢量，8：影像路网)
                     imgUrl = CLStringUtil.getImgUrl(z, x, y);
@@ -260,6 +261,7 @@ public class DownMapService {
                     // 开始下载地图
                     if (file != null) {
                         HttpUtil.downImageByGet(imgUrl, file);
+                        speed++; // 累计到下载速度上
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -269,7 +271,7 @@ public class DownMapService {
                     errResults.add(imgUrl);
                     log.info(e.getMessage());
                 }
-                speed++; // 累计到下载进度上
+                // 已经完成的文件,用于计算下载进度
                 countSuccessFile++;
             }
             return 1;
