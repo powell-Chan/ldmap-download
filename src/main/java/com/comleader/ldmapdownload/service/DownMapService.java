@@ -59,6 +59,10 @@ public class DownMapService {
 
     public static volatile boolean isBusy = false; // 正在下载
 
+    private Timer scheduleTimer;
+
+    private Timer speedTimer;
+
     /**
      * @param body
      * @param session
@@ -111,7 +115,7 @@ public class DownMapService {
             }
         }
         // 启动一个定时器,每秒刷新下载速度
-        Timer speedTimer = new Timer();
+        speedTimer = new Timer();
         speedTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -123,7 +127,7 @@ public class DownMapService {
             }
         }, 1000, 1000);
         // 刷新进度
-        Timer scheduleTimer = new Timer();
+        scheduleTimer = new Timer();
         scheduleTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -149,8 +153,11 @@ public class DownMapService {
             countSuccessFile++;
             System.out.println(result);
         }
+        // 完成标志
+        this.finished = true;
         // 结束定时器
         speedTimer.cancel();
+        scheduleTimer.cancel();
         long end = System.currentTimeMillis();
         // 封装执行结果
         // 失败的个数
@@ -159,8 +166,6 @@ public class DownMapService {
         resBody.put("totalTime", (end - start) / 1000 + " s");
         // 总文件大小
         resBody.put("totalSize", CLStringUtil.getDownTotalSize());
-        // 完成标志
-        this.finished = true;
         log.info("falidNum > "+errResults.size());
         log.info("totalTime > "+(end - start) / 1000 + " s");
         log.info("totalSize > "+CLStringUtil.getDownTotalSize());

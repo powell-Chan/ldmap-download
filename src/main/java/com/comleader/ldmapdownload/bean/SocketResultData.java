@@ -4,6 +4,8 @@ import com.comleader.ldmapdownload.util.OperationTypeEnum;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @ClassName ResultData
@@ -77,4 +79,25 @@ public class SocketResultData  implements Serializable {
     public void setBody(Map<String, Object> body) {
         this.body = body;
     }
+
+    //public static void main(String[] args) throws InterruptedException {
+    //
+    //    Timer timer = new Timer();
+    //    timer.schedule(new TimerTask() {
+    //        @Override
+    //        public void run() {
+    //            System.out.println("timer start");
+    //        }
+    //    }, 0, 1000);
+    //    Thread.sleep(1000);
+    //    timer.cancel();
+    //    timer.cancel();
+    //    timer = new Timer();
+    //    timer.schedule(new TimerTask() {
+    //        @Override
+    //        public void run() {
+    //            System.out.println("after cancel");
+    //        }
+    //    }, 1000, 2000);
+    //}
 }

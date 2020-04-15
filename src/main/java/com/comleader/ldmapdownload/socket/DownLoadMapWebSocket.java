@@ -44,6 +44,10 @@ public class DownLoadMapWebSocket {
 
     private String name; // 当前连接的客户端的用户名
 
+    private Timer scheduleTimer;
+
+    private Timer speedTimer;
+
     /*
      * @description:  websocket无法通过@Autowried注入Service,需要通过如下方式进行解决
      **/
@@ -166,14 +170,14 @@ public class DownLoadMapWebSocket {
 
     private void downLoadMap(SocketResultData socketData, Session session) throws Exception {
         // 创建定时任务向前端发送速度\进度
-        Timer speedTimer = new Timer();
+        speedTimer = new Timer();
         // 每隔三秒汇报一次
         speedTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 // 发送了停止命令或者已经完成
                 if (DownMapService.stoped || DownMapService.finished) {
-                    speedTimer.cancel();
+                    speedTimer.purge();
                 }else {
                     // 发送速度
                     SocketResultData speed = new SocketResultData(OperationTypeEnum.SYS_SUCCESS, "下载速度" + DownMapService.speed + "张/s", null);
@@ -182,7 +186,7 @@ public class DownLoadMapWebSocket {
             }
         }, 1000, 1000);
         // 创建定时任务向前端发送进度
-        Timer scheduleTimer = new Timer();
+        scheduleTimer = new Timer();
         // 每隔0.2秒汇报一次
         scheduleTimer.schedule(new TimerTask() {
             @Override
