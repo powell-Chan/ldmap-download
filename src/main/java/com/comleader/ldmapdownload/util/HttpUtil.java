@@ -76,7 +76,9 @@ public class HttpUtil {
                 e.printStackTrace();
             }
             // 累加总文件大小
-            totalSize += FileUtil.size(file);
+            if(file != null){
+                totalSize += FileUtil.size(file);
+            }
         }
 
     }

@@ -140,12 +140,12 @@ public class DownMapService {
                 for (int i = 0; i < DownMapService.schedule; i++) {
                     stringBuffer.append("]");
                 }
-                stringBuffer.append(countSuccessFile +"/"+readyCountFile);
+                stringBuffer.append("\t"+countSuccessFile +"/"+readyCountFile);
                 System.out.print(stringBuffer);
             }
         }, 200, 200);
 
-        // 主线程阻塞等待执行完成
+        // 主线程阻塞等待下载执行完成
         for (Future<Integer> future : futures) {
             if (DownMapService.stoped || !session.isOpen()) {
                 DownMapService.finished = true;
@@ -261,10 +261,11 @@ public class DownMapService {
                     // 开始下载地图
                     if (file != null) {
                         HttpUtil.downImageByGet(imgUrl, file);
-                        speed++; // 累计到下载速度上
                     }
+                    speed++; // 累计到下载速度上
                 } catch (Exception e) {
                     e.printStackTrace();
+                    // 回滚
                     if (file != null && file.exists()) {
                         file.delete();
                     }
