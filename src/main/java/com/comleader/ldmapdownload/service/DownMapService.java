@@ -39,9 +39,6 @@ public class DownMapService {
     //private volatile Map<String, String> errResults = new HashMap<>();
     private List<String> errResults = new CopyOnWriteArrayList<>();
 
-    @Value("${map.Lv6.flag}")
-    private Boolean lvFlag; // 记录前六级是否打开下载
-
     @Value("${map.download.append}")
     private boolean appendFlag; // 是否是继续下载
 
