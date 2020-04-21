@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @PropertySource(value = {"classpath:config/download-map.properties"}, encoding = "UTF-8")
 @Slf4j
 @Order(6)
-public class DownMapLv6Runner implements ApplicationRunner {
+public class DownMapRunner implements ApplicationRunner {
 
     @Value("${map.Lv6.flag}")
     private boolean flag; // 记录前六级是否打开下载
@@ -35,5 +35,7 @@ public class DownMapLv6Runner implements ApplicationRunner {
         DownMapLv4.downLoad();
         DownMapLv5.downLoad();
         DownMapLv6.downLoad();
+        DownMapLv7.downLoad();
+        DownMapLv8.downLoad();
     }
 }
