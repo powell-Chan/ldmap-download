@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Order(6)
 public class DownMapRunner implements ApplicationRunner {
 
-    @Value("${map.Lv6.flag}")
+    @Value("${map.Lv8.flag}")
     private boolean flag; // 记录前六级是否打开下载
 
 
