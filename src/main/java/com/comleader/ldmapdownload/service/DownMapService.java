@@ -64,7 +64,7 @@ public class DownMapService {
      * @param body
      * @param session
      * @description: 下载地图文件保存到本地
-     * @return: java.util.Map<java.lang.String               ,               java.lang.Object>
+     * @return: java.util.Map<java.lang.String                               ,                               java.lang.Object>
      * @author: zhanghang
      * @date: 2020/4/13
      **/
@@ -137,7 +137,7 @@ public class DownMapService {
                 for (int i = 0; i < DownMapService.schedule; i++) {
                     stringBuffer.append("]");
                 }
-                stringBuffer.append("\t"+countSuccessFile +"/"+readyCountFile);
+                stringBuffer.append("\t" + countSuccessFile + "/" + readyCountFile);
                 System.out.print(stringBuffer);
             }
         }, 200, 200);
@@ -189,7 +189,7 @@ public class DownMapService {
     /**
      * @param body
      * @description: 下载信息确认
-     * @return: java.util.Map<java.lang.String               ,               java.lang.Object>
+     * @return: java.util.Map<java.lang.String                               ,                               java.lang.Object>
      * @author: zhanghang
      * @date: 2020/4/13
      **/
