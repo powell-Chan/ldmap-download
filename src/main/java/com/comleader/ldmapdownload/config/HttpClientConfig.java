@@ -63,7 +63,7 @@ public class HttpClientConfig {
 
             sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
 
-//信任所有
+            //信任所有
 
                 @Override
 
