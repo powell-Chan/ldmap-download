@@ -1,11 +1,10 @@
 package com.comleader.ldmapdownload.config;
 
-import com.comleader.ldmapdownload.util.CLStringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 /**
  * @ClassName WebMvcConfig
@@ -16,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  **/
 @Configuration
 @PropertySource(value = {"classpath:config/download-map.properties"}, encoding = "UTF-8")
-public class WebMvcConfig extends WebMvcConfigurerAdapter {
+public class WebMvcConfig extends WebMvcConfigurationSupport {
 
     @Value("${file.mapImgPath}")
     private String mapImgPath;
@@ -25,7 +24,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/img/**")
                 .addResourceLocations("file:/"+ mapImgPath +"/");
-        super.addResourceHandlers(registry);
+        System.out.println("END >> file:/"+ mapImgPath +"/");
     }
 
 }
