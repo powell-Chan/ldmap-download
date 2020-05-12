@@ -12,6 +12,8 @@ public class LdmapDownloadApplication {
         ConfigurableApplicationContext run = SpringApplication.run(LdmapDownloadApplication.class, args);
         // 解决WebSocket不能注入的问题
         DownLoadMapWebSocket.setApplicationContext(run);
+
+
     }
 
 }
