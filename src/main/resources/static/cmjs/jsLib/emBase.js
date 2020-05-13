@@ -1,7 +1,7 @@
 var localhostPath;
 (function () {
     // http://127.0.0.1:9090/cmjs/jsLib/emBase.js
-    var srcPath = document.querySelectorAll('script')[0].getAttribute('src');
+    var srcPath = document.currentScript.src; // 获取到当前script标签的src
     var idx = srcPath.indexOf("/cmjs");
     var contexPaht = srcPath.substring(0,idx);
     localhostPath = contexPaht;
