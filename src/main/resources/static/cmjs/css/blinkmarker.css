@@ -1,0 +1,44 @@
+.pulse-icon {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 100%;
+    background-color: red;
+    position: relative;
+    box-shadow: 1px 1px 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+.dive-icon {
+    content: "";
+    box-shadow: 0 0 6px 2px red;
+    animation: pulsate 1s ease-out;
+    animation-iteration-count: infinite;
+    animation-delay: 1.1s;
+    -webkit-border-radius: 100%;
+    border-radius: 100%;
+    height: 200%;
+    width: 200%;
+    animation: pulsate 2s infinite;
+    position: absolute;
+    margin: -50% 0 0 -50%;
+}
+
+@keyframes pulsate {
+    0% {
+        transform: scale(0.1, 0.1);
+        opacity: 0;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+    50% {
+        opacity: 1;
+        -ms-filter: none;
+        filter: none;
+    }
+    100% {
+        transform: scale(1.2,1.2);
+        opacity: 0;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+}
