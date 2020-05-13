@@ -16,7 +16,7 @@ DrawTool.onDoubleClick = function (e){
 	return false;
 }
 
-DrawTool.init = function (map,iconUrl){
+DrawTool.init = function (map,iconUrl,data){
 	// var circldRadius = 50;
 	map.off('click');
 	map.on('click', onClick);    //点击地图
