@@ -13,6 +13,7 @@ var localhostPath;
     document.write('<script type="text/javascript" src="'+localhostPath+'/js/leafletJs/leaflet-src.js"></script>');
     document.write('<script type="text/javascript" src="'+localhostPath+'/js/lmJs/leaflet-tilelayer-colorizr.js"></script>');
     document.write('<script type="text/javascript" src="'+localhostPath+'/js/lmJs/setMapStytle.js"></script>');
+    document.write('<script type="text/javascript" src="'+localhostPath+'/js/lmJs/mapStyle.js"></script>');
     document.write('<script type="text/javascript" src="'+localhostPath+'/js/lmJs/initMap.js"></script>');
     document.write('<script type="text/javascript" src="'+localhostPath+'/js/lmJs/blinkmarker.js"></script>');
     document.write('<script type="text/javascript" src="'+localhostPath+'/js/lmJs/DrawTool.js"></script>');

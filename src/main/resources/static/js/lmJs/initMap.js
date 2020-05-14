@@ -21,7 +21,6 @@ L.initMap = function(mapDiv,data){
 			attributionControl:  false // 右下角leaflet.js图标
 		});
 	}
-	console.log(data.mapStyle)
 	if (data.mapStyle && data.mapStyle.indexOf("blue") != -1){
 		document.write('<link rel="stylesheet" type="text/css" href="'+localhostPath+'/js/lmcss/blue.css">');
 	}
