@@ -21,9 +21,9 @@ L.initMap = function(mapDiv,data){
 			attributionControl:  false // 右下角leaflet.js图标
 		});
 	}
-
+	console.log(data.mapStyle)
 	if (data.mapStyle && data.mapStyle.indexOf("blue") != -1){
-		document.write('<link rel="stylesheet" type="text/css" href='+localhostPath+'"/static/cmjs/lmcss/blue.css">');
+		document.write('<link rel="stylesheet" type="text/css" href="'+localhostPath+'/js/lmcss/blue.css">');
 	}
     
 	//将图层加载到地图上，并设置最大的聚焦还有map样式
@@ -36,7 +36,7 @@ L.initMap = function(mapDiv,data){
 		minZoom: 3,
 		colorize: function (pixel) {
 			// 科技紫主题
-			if (!data.mapStyte || data.mapStyte == 'default'){
+			if (!data.mapStyle || data.mapStyte == 'default'){
 
 			}
 			if (data.mapStyle == 'bluePurpled'){ // 蓝紫色主题
