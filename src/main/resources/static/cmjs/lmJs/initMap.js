@@ -23,7 +23,7 @@ L.initMap = function(mapDiv,data){
 	}
 
 	if (data.mapStyle && data.mapStyle.indexOf("blue") != -1){
-		document.write('<link rel="stylesheet" type="text/css" href="'+localhostPath+'/cmjs/css/blue.css">');
+		document.write('<link rel="stylesheet" type="text/css" href='+localhostPath+'"/static/cmjs/lmcss/blue.css">');
 	}
     
 	//将图层加载到地图上，并设置最大的聚焦还有map样式
