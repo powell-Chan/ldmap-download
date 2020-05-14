@@ -9,9 +9,9 @@
 
 #### 安装教程
 
-1.  Maven构建或者直接在项目中使用
+1. Maven构建或者直接在项目中使用
 2. 打Jar包后使用 java -jar 项目 （需要安装有Java环境）
-3. 启动后访问http://localhost:9090以打开项目
+3. 启动后直接打开static下的index.html页面进行访问
 
 #### 使用说明
 

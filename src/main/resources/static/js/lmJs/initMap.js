@@ -36,7 +36,7 @@ L.initMap = function(mapDiv,data){
 		minZoom: 3,
 		colorize: function (pixel) {
 			// 科技紫主题
-			if (!data.mapStyle || data.mapStyte == 'default'){
+			if (!data.mapStyle || data.mapStyle == 'default'){
 
 			}
 			if (data.mapStyle == 'bluePurpled'){ // 蓝紫色主题

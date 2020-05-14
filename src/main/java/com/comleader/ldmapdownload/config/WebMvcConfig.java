@@ -3,8 +3,10 @@ package com.comleader.ldmapdownload.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -33,5 +35,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("*","null")
                 .allowedMethods("*");
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        //默认地址（可以是页面或后台请求接口）
+        registry.addViewController("/").setViewName("forward:/index.html");
+        //设置过滤优先级最高
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 }
